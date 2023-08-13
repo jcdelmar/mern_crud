@@ -17,11 +17,19 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// const db = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "",
+//   database: "todo_db",
+// });
+
+//this database is run on http://www.freesqldatabaase.com
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "todo_db",
+  host: "sql6.freesqldatabase.com",
+  user: "sql6639410",
+  password: "n1M3JPZSMu",
+  database: "sql6639410",
 });
 
 const PORT = 5000;
