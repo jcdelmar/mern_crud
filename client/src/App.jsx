@@ -2,7 +2,13 @@ import "./index.css";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useState, useEffect, useRef } from "react";
-import { FaTrashAlt, FaPlusSquare, FaRedoAlt, FaCheck } from "react-icons/fa";
+import {
+  FaTrashAlt,
+  FaPlusSquare,
+  FaRedoAlt,
+  FaCheck,
+  FaEdit,
+} from "react-icons/fa";
 
 function App() {
   //list of todo items
@@ -15,11 +21,19 @@ function App() {
   const [emptyCheck, setEmptyCheck] = useState(false);
 
   //custom buttons for swal
-
   const swalWithCustomButton = Swal.mixin({
     customClass: {
       confirmButton:
         "bg-green-500 hover:bg-green-800 text-white font-semibold hover:text-white py-2 px-4 border border-green-600 hover:border-transparent rounded",
+    },
+    buttonsStyling: false,
+  });
+  const swalWithCustomEditButton = Swal.mixin({
+    customClass: {
+      confirmButton:
+        "bg-yellow-500 mr-2 hover:bg-yellow-800 text-white font-semibold hover:text-white py-2 px-4 border border-yellow-600 hover:border-transparent rounded",
+      cancelButton:
+        "bg-gray-800 hover:bg-gray-900 text-white font-semibold hover:text-white py-2 px-4 border border-gray-700 hover:border-transparent rounded",
     },
     buttonsStyling: false,
   });
@@ -53,7 +67,11 @@ function App() {
       axios
         .post(addTodoURL, { todo_title: todo })
         .then((res) => {
-          Swal.fire("Success", "To-Do has been added.", "success");
+          swalWithCustomButton.fire(
+            "Success",
+            "To-Do has been added.",
+            "success"
+          );
           setRefresh(true);
         })
         .catch((err) => {
@@ -88,8 +106,8 @@ function App() {
       text: "",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#292b2c",
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
@@ -104,6 +122,63 @@ function App() {
           });
       }
     });
+  };
+
+  //handle reset list
+  const handleReset = () => {
+    const handleResetURL = "http://localhost:5000/todos/resetList/";
+
+    Swal.fire({
+      title: "Reset To-Do List?",
+      text: "",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#292b2c",
+      confirmButtonText: "Reset",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .put(handleResetURL, [])
+          .then((res) => {
+            Swal.fire("Your To-Do list has been reset.", "", "success");
+            setRefresh(true);
+          })
+          .catch((err) => {
+            console.log("Reset To-do Error.");
+          });
+      }
+    });
+  };
+
+  const handleEdit = (id, todo) => {
+    console.log("handleedit : " + id + "  " + todo);
+    swalWithCustomEditButton
+      .fire({
+        title: "Edit Todo",
+        html:
+          `<input type="text" id="title" class="swal2-input" value = '` +
+          todo +
+          `' placeholder="To-Do">`,
+        confirmButtonText: "Confirm",
+        showCancelButton: true,
+
+        focusConfirm: false,
+        preConfirm: () => {
+          const title = Swal.getPopup().querySelector("#title").value;
+          if (!title) {
+            Swal.showValidationMessage(`To-Do title cannot be empty.`);
+          }
+          return { todo: todo };
+        },
+      })
+      .then((result) => {
+        Swal.fire(
+          `
+        todo: ${result.value.todo}
+      `.trim()
+        );
+      });
   };
 
   return (
@@ -133,10 +208,12 @@ function App() {
               >
                 <FaPlusSquare />
               </button>
+
               <button
                 alt="Reset To-Do List"
                 title="Reset To-Do List"
                 className="bg-red-500 ml-1 hover:bg-red-800 text-white font-semibold hover:text-white py-2 px-4 border border-red-600 hover:border-transparent rounded"
+                onClick={handleReset}
               >
                 <FaRedoAlt />
               </button>
@@ -159,27 +236,37 @@ function App() {
                   {row.is_done ? (
                     <button
                       onClick={(e) => {
-                        handleDone(e.target.id, "undo");
+                        handleDone(e.currentTarget.id, "undo");
                       }}
                       id={row.todo_id}
-                      className="bg-transparent m-1 hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
+                      className="bg-transparent mr-1 hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
                     >
                       Undo
                     </button>
                   ) : (
                     <button
                       onClick={(e) => {
-                        handleDone(e.target.id, "done");
+                        handleDone(e.currentTarget.id, "done");
                       }}
                       id={row.todo_id}
-                      className="bg-transparent m-1 hover:bg-green-500 text-green-700 font-semibold hover:text-white py-3 px-4 border border-green-500 hover:border-transparent rounded"
+                      className="bg-transparent mr-1 hover:bg-green-500 text-green-700 font-semibold hover:text-white py-3 px-4 border border-green-500 hover:border-transparent rounded"
                     >
                       <FaCheck />
                     </button>
                   )}
                   <button
+                    id={row.todo_id}
+                    title={row.todo_title}
                     onClick={(e) => {
-                      handleRemove(e.target.id);
+                      handleEdit(e.currentTarget.id, e.currentTarget.title);
+                    }}
+                    className="bg-transparent mr-1 hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-3 px-4 border border-yellow-600 hover:border-transparent rounded"
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      handleRemove(e.currentTarget.id);
                     }}
                     id={row.todo_id}
                     className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-3 px-4 border border-red-500 hover:border-transparent rounded"

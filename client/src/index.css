@@ -3,5 +3,9 @@
 @tailwind utilities;
 
 body {
-  background-color: lightyellow;
+  background-color: rgb(183, 194, 174);
+}
+
+.more-action-wrapper svg {
+  pointer-events: none;
 }
