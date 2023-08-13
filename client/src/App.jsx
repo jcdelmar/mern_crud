@@ -8,7 +8,6 @@ import {
   FaRedoAlt,
   FaCheck,
   FaEdit,
-  FaRegSquare,
 } from "react-icons/fa";
 
 function App() {
@@ -39,8 +38,35 @@ function App() {
     buttonsStyling: false,
   });
 
+  //Environment Variables
+  const status = import.meta.env.VITE_STATUS;
+  const get_todos_url =
+    status == "TESTING"
+      ? import.meta.env.VITE_GET_TODOS_LOCAL
+      : import.meta.env.VITE_GET_TODOS;
+  const add_todo_url =
+    status == "TESTING"
+      ? import.meta.env.VITE_ADD_TODO_LOCAL
+      : import.meta.env.VITE_ADD_TODO;
+  const handle_done_url =
+    status == "TESTING"
+      ? import.meta.env.VITE_HANDLE_DONE_LOCAL
+      : import.meta.env.VITE_HANDLE_DONE;
+  const handle_remove_url =
+    status == "TESTING"
+      ? import.meta.env.VITE_HANDLE_REMOVE_LOCAL
+      : import.meta.env.VITE_HANDLE_REMOVE;
+  const handle_reset_url =
+    status == "TESTING"
+      ? import.meta.env.VITE_HANDLE_RESET_LOCAL
+      : import.meta.env.VITE_HANDLE_RESET_LOCAL;
+  const handle_edit_url =
+    status == "TESTING"
+      ? import.meta.env.VITE_HANDLE_EDIT_LOCAL
+      : import.meta.env.VITE_HANDLE_EDIT_LOCAL;
+
   //get initial set of todos from database
-  const getTodosURL = "http://localhost:5000/todos/";
+  const getTodosURL = get_todos_url;
   useEffect(() => {
     if (refresh) {
       axios
