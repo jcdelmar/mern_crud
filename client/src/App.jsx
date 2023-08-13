@@ -169,15 +169,22 @@ function App() {
           if (!title) {
             Swal.showValidationMessage(`To-Do title cannot be empty.`);
           }
-          return { todo: todo };
+          return { title: title };
         },
       })
       .then((result) => {
-        Swal.fire(
-          `
-        todo: ${result.value.todo}
-      `.trim()
-        );
+        console.log("Confirmed edit with value : " + result.value.title);
+        console.log("ID : " + id);
+        const handleEditURL = "http://localhost:5000/todos/update/" + id;
+        axios
+          .put(handleEditURL, { title: result.value.title })
+          .then((res) => {
+            console.log("Successfully Updated To-Do");
+            setRefresh(true);
+          })
+          .catch((err) => {
+            console.log("Update To-Do Error.");
+          });
       });
   };
 
