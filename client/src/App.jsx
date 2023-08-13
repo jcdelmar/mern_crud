@@ -8,6 +8,7 @@ import {
   FaRedoAlt,
   FaCheck,
   FaEdit,
+  FaRegSquare,
 } from "react-icons/fa";
 
 function App() {
@@ -73,6 +74,7 @@ function App() {
             "success"
           );
           setRefresh(true);
+          setEmptyCheck(false);
         })
         .catch((err) => {
           console.log("Error adding todo.");
@@ -143,6 +145,7 @@ function App() {
           .then((res) => {
             Swal.fire("Your To-Do list has been reset.", "", "success");
             setRefresh(true);
+            setEmptyCheck(false);
           })
           .catch((err) => {
             console.log("Reset To-do Error.");
@@ -189,13 +192,12 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="">
       <div className="h-100 w-full flex items-center justify-center bg-teal-lightest font-sans">
         <div className="bg-white rounded shadow p-6 m-4 w-full lg:w-3/4 lg:max-w-lg">
           <div className="mb-4">
             <div className="flex justify-between">
-              <h1 className="text-gray-700">To-Do List</h1>
-              <button className="rounded-full background">Mode</button>
+              <h1 className="text-gray-700 text-2xl">To-Do List</h1>
             </div>
 
             <div className="flex mt-4">
