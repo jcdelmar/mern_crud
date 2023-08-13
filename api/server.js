@@ -1,6 +1,7 @@
 import mysql from "mysql";
 import cors from "cors";
 import express from "express";
+import dotenv from "dotenv/config.js";
 
 //CRUD Queries for todos table
 import {
@@ -26,13 +27,13 @@ app.use(cors());
 
 //this database is run on http://www.freesqldatabaase.com
 const db = mysql.createConnection({
-  host: "sql6.freesqldatabase.com",
-  user: "sql6639410",
-  password: "n1M3JPZSMu",
-  database: "sql6639410",
+  host: process.env.HOST,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  database: process.env.DB,
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log("Server is listening...");
