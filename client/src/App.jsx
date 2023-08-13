@@ -2,7 +2,7 @@ import "./index.css";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useState, useEffect, useRef } from "react";
-import { FaTrashAlt, FaPlusSquare } from "react-icons/fa";
+import { FaTrashAlt, FaPlusSquare, FaRedoAlt, FaCheck } from "react-icons/fa";
 
 function App() {
   //list of todo items
@@ -11,6 +11,18 @@ function App() {
   const [refresh, setRefresh] = useState(true);
   //referencing todo input field
   const value = useRef(null);
+  //check if input is empty
+  const [emptyCheck, setEmptyCheck] = useState(false);
+
+  //custom buttons for swal
+
+  const swalWithCustomButton = Swal.mixin({
+    customClass: {
+      confirmButton:
+        "bg-green-500 hover:bg-green-800 text-white font-semibold hover:text-white py-2 px-4 border border-green-600 hover:border-transparent rounded",
+    },
+    buttonsStyling: false,
+  });
 
   //get initial set of todos from database
   const getTodosURL = "http://localhost:5000/todos/";
@@ -34,17 +46,20 @@ function App() {
     const todo = value.current.value;
     //clear input field
     value.current.value = "";
-
-    const addTodoURL = "http://localhost:5000/todos/";
-    axios
-      .post(addTodoURL, { todo_title: todo })
-      .then((res) => {
-        Swal.fire("Success", "Task has been added.", "success");
-        setRefresh(true);
-      })
-      .catch((err) => {
-        console.log("Error adding todo.");
-      });
+    if (todo == "") {
+      setEmptyCheck(true);
+    } else {
+      const addTodoURL = "http://localhost:5000/todos/";
+      axios
+        .post(addTodoURL, { todo_title: todo })
+        .then((res) => {
+          Swal.fire("Success", "To-Do has been added.", "success");
+          setRefresh(true);
+        })
+        .catch((err) => {
+          console.log("Error adding todo.");
+        });
+    }
   };
 
   //handle done/undo button
@@ -55,10 +70,9 @@ function App() {
     axios
       .put(handleDoneURL, data)
       .then((res) => {
-        console.log("handle done complete");
         setRefresh(true);
         if (type == "done")
-          Swal.fire("Good job!", "Task has been completed.", "success");
+          swalWithCustomButton.fire("Task has been completed.", "", "success");
       })
       .catch((err) => {
         console.log("Handle Done Error.");
@@ -70,7 +84,7 @@ function App() {
     const handleRemoveURL = "http://localhost:5000/todos/delete/" + id;
 
     Swal.fire({
-      title: "Delete task?",
+      title: "Delete To-Do?",
       text: "",
       icon: "warning",
       showCancelButton: true,
@@ -86,7 +100,7 @@ function App() {
             setRefresh(true);
           })
           .catch((err) => {
-            console.log("Remove Todo Error.");
+            console.log("Remove To-do Error.");
           });
       }
     });
@@ -98,30 +112,33 @@ function App() {
         <div className="bg-white rounded shadow p-6 m-4 w-full lg:w-3/4 lg:max-w-lg">
           <div className="mb-4">
             <div className="flex justify-between">
-              <h1 className="text-gray-700">Todo List</h1>
+              <h1 className="text-gray-700">To-Do List</h1>
               <button className="rounded-full background">Mode</button>
             </div>
 
             <div className="flex mt-4">
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 mr-4 text-grey-darker"
-                placeholder="Add Todo"
+                className={
+                  "shadow appearance-none border rounded w-full py-2 px-3 mr-4 text-grey-darker " +
+                  (emptyCheck ? "border-red-500" : "")
+                }
+                placeholder="Add To-Do"
                 ref={value}
               />
               <button
-                alt="Add Todo Item"
-                title="Add Todo Item"
+                alt="Add To-Do Item"
+                title="Add To-Do Item"
                 className="bg-green-500 hover:bg-green-800 text-white font-semibold hover:text-white py-2 px-4 border border-green-600 hover:border-transparent rounded"
                 onClick={handleAdd}
               >
                 <FaPlusSquare />
               </button>
               <button
-                alt="Reset Todo List"
-                title="Reset Todo List"
+                alt="Reset To-Do List"
+                title="Reset To-Do List"
                 className="bg-red-500 ml-1 hover:bg-red-800 text-white font-semibold hover:text-white py-2 px-4 border border-red-600 hover:border-transparent rounded"
               >
-                <FaTrashAlt />
+                <FaRedoAlt />
               </button>
             </div>
           </div>
@@ -131,8 +148,10 @@ function App() {
                 <div className="flex mb-4 items-center" key={row.todo_id}>
                   <p
                     className={
-                      "w-full  text-green " +
-                      (row.is_done ? "line-through" : "")
+                      "w-full  " +
+                      (row.is_done
+                        ? "line-through text-yellow-800"
+                        : "text-gray-900")
                     }
                   >
                     {row.todo_title}
@@ -153,9 +172,9 @@ function App() {
                         handleDone(e.target.id, "done");
                       }}
                       id={row.todo_id}
-                      className="bg-transparent m-1 hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
+                      className="bg-transparent m-1 hover:bg-green-500 text-green-700 font-semibold hover:text-white py-3 px-4 border border-green-500 hover:border-transparent rounded"
                     >
-                      Done
+                      <FaCheck />
                     </button>
                   )}
                   <button
@@ -163,9 +182,9 @@ function App() {
                       handleRemove(e.target.id);
                     }}
                     id={row.todo_id}
-                    className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
+                    className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-3 px-4 border border-red-500 hover:border-transparent rounded"
                   >
-                    Remove
+                    <FaTrashAlt />
                   </button>
                 </div>
               );

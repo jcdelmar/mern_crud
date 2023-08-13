@@ -10,6 +10,7 @@ import {
   updateTodo,
   deleteTodo,
   updateIsDone,
+  resetList,
 } from "./queries.js";
 
 const app = express();
@@ -79,6 +80,13 @@ app.put("/todos/handleDone", (req, res) => {
   const values = [is_done, id];
   db.query(updateIsDone, values, (err, result) => {
     if (err) throw err;
-    return res.status(200).send("is_done updated successfully.");
+    return res.status(200).send("To-Do updated successfully.");
+  });
+});
+
+app.put("/todos/resetList", (req, res) => {
+  db.query(resetList, [], (err, result) => {
+    if (err) throw err;
+    return res.status(200).send("List has been reset.");
   });
 });

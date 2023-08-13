@@ -16,3 +16,5 @@ export const updateTodo =
 export const deleteTodo = "UPDATE todos SET is_deleted = 1 WHERE todo_id = ?";
 
 export const updateIsDone = "UPDATE todos SET is_done = ? WHERE todo_id = ?";
+
+export const resetList = "UPDATE todos SET is_done = 1 WHERE is_done = 0";
