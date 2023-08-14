@@ -27,10 +27,10 @@ app.use(cors());
 
 //this database is run on http://www.freesqldatabaase.com
 const db = mysql.createConnection({
-  host: process.env.HOST,
-  user: process.env.USER,
-  password: process.env.PASSWORD,
-  database: process.env.DB,
+  host: process.env.HOST || "sql6.freesqldatabase.com",
+  user: process.env.USER || "sql6639410",
+  password: process.env.PASSWORD || "n1M3JPZSMu",
+  database: process.env.DB || "sql6639410",
 });
 
 const PORT = process.env.PORT || 5000;

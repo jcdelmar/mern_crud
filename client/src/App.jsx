@@ -66,11 +66,12 @@ function App() {
       : import.meta.env.VITE_HANDLE_EDIT_LOCAL;
 
   //get initial set of todos from database
-  const getTodosURL = get_todos_url;
   useEffect(() => {
+    console.log("GETTING DATA");
+    console.log(get_todos_url);
     if (refresh) {
       axios
-        .get(getTodosURL)
+        .get(get_todos_url)
         .then((res) => {
           setTodos(res.data);
         })
@@ -90,7 +91,7 @@ function App() {
     if (todo == "") {
       setEmptyCheck(true);
     } else {
-      const addTodoURL = "http://localhost:5000/todos/";
+      const addTodoURL = add_todo_url;
       axios
         .post(addTodoURL, { todo_title: todo })
         .then((res) => {
@@ -111,7 +112,7 @@ function App() {
   //handle done/undo button
   const handleDone = (id, type) => {
     const data = { todo_id: id, type: type };
-    const handleDoneURL = "http://localhost:5000/todos/handleDone";
+    const handleDoneURL = handle_done_url;
 
     axios
       .put(handleDoneURL, data)
@@ -127,7 +128,7 @@ function App() {
 
   //handle remove todo
   const handleRemove = (id) => {
-    const handleRemoveURL = "http://localhost:5000/todos/delete/" + id;
+    const handleRemoveURL = handle_remove_url + id;
 
     Swal.fire({
       title: "Delete To-Do?",
@@ -154,7 +155,7 @@ function App() {
 
   //handle reset list
   const handleReset = () => {
-    const handleResetURL = "http://localhost:5000/todos/resetList/";
+    const handleResetURL = handle_reset_url;
 
     Swal.fire({
       title: "Reset To-Do List?",
@@ -204,7 +205,7 @@ function App() {
       .then((result) => {
         console.log("Confirmed edit with value : " + result.value.title);
         console.log("ID : " + id);
-        const handleEditURL = "http://localhost:5000/todos/update/" + id;
+        const handleEditURL = handle_edit_url + id;
         axios
           .put(handleEditURL, { title: result.value.title })
           .then((res) => {
