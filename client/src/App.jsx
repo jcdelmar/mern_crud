@@ -41,29 +41,29 @@ function App() {
   //Environment Variables
   const status = import.meta.env.VITE_STATUS;
   const get_todos_url =
-    status == "TESTING"
-      ? import.meta.env.VITE_GET_TODOS_LOCAL
-      : import.meta.env.VITE_GET_TODOS;
+    import.meta.env.VITE_GET_TODOS ||
+    import.meta.env.VITE_GET_TODOS_LOCAL ||
+    "http://localhost:5000/todos/";
   const add_todo_url =
-    status == "TESTING"
-      ? import.meta.env.VITE_ADD_TODO_LOCAL
-      : import.meta.env.VITE_ADD_TODO;
+    import.meta.env.VITE_ADD_TODO ||
+    import.meta.env.VITE_ADD_TODO_LOCAL ||
+    "http://localhost:5000/todos/";
   const handle_done_url =
-    status == "TESTING"
-      ? import.meta.env.VITE_HANDLE_DONE_LOCAL
-      : import.meta.env.VITE_HANDLE_DONE;
+    import.meta.env.VITE_HANDLE_DONE ||
+    import.meta.env.VITE_HANDLE_DONE_LOCAL ||
+    "http://localhost:5000/todos/handleDone";
   const handle_remove_url =
-    status == "TESTING"
-      ? import.meta.env.VITE_HANDLE_REMOVE_LOCAL
-      : import.meta.env.VITE_HANDLE_REMOVE;
+    import.meta.env.VITE_HANDLE_REMOVE ||
+    import.meta.env.VITE_HANDLE_REMOVE_LOCAL ||
+    "http://localhost:5000/todos/delete/";
   const handle_reset_url =
-    status == "TESTING"
-      ? import.meta.env.VITE_HANDLE_RESET_LOCAL
-      : import.meta.env.VITE_HANDLE_RESET_LOCAL;
+    import.meta.env.VITE_HANDLE_RESET ||
+    import.meta.env.VITE_HANDLE_RESET_LOCAL ||
+    "http://localhost:5000/todos/resetList/";
   const handle_edit_url =
-    status == "TESTING"
-      ? import.meta.env.VITE_HANDLE_EDIT_LOCAL
-      : import.meta.env.VITE_HANDLE_EDIT_LOCAL;
+    import.meta.env.VITE_HANDLE_EDIT ||
+    import.meta.env.VITE_HANDLE_EDIT_LOCAL ||
+    "http://localhost:5000/todos/update/";
 
   //get initial set of todos from database
   useEffect(() => {
@@ -210,6 +210,11 @@ function App() {
           .put(handleEditURL, { title: result.value.title })
           .then((res) => {
             console.log("Successfully Updated To-Do");
+            swalWithCustomButton.fire(
+              "Success",
+              "To-Do has been updated.",
+              "success"
+            );
             setRefresh(true);
           })
           .catch((err) => {
