@@ -2,7 +2,7 @@
 
 > DEPLOYED DATABASE IN https://www.freesqldatabase.com/
 
-> DEPLOYED API WEB SERVICE IN https://dashboard.render.com/
+> DEPLOYED API WEB SERVICE IN https://www.render.com/
 
 # How to run (with remote mysql db)
 
